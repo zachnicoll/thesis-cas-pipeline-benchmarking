@@ -1,4 +1,4 @@
 .DS_Store
-.hmm
-.faa
+*.hmm
+*.faa
 summary.txt
