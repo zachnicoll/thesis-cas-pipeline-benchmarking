@@ -1,58 +1,64 @@
 import os
+import pathlib
 import re
 import time
 
-CAS_TYPE = "cas1"
-
-# 1. Build profile from alignment
-os.system("hmmbuild cas_profile.hmm cas1_alignment.txt")
+profiles = list(pathlib.Path("./profiles").glob("*.hmm"))
 
 # Start timer here to measure speed of prodigal and hmmsearch steps
 tic = time.perf_counter()
 
 # 2. Create list of all proteins in genome with Prodigal
-os.system("prodigal -i genome.fna -a proteins.faa")
+os.system("prodigal -i genome.fna -a proteins.faa > /dev/null")
 
 # 3. Use hmmer to search the protetins list for Cas proteins
-os.system("hmmsearch --tblout summary.txt cas_profile.hmm proteins.faa")
 
-# Stop timer here
-toc = time.perf_counter()
-
-# 4. Compare the results with the Cas gene master list to check
-# correctness of matches
-f = open("summary.txt", "r")
-
+genome_name = None
 # Store each matched protein in this array as a tuple:
 # (target_name, domain_start, domain_end)
 targets = []
 
-genome_name = None
+for profile in profiles:
+    CAS_TYPE = profile.name.split("_")[0].lower()
 
-while True:
-    line = f.readline()
+    os.system(
+        f"hmmsearch --tblout summary.txt {profile.absolute()} proteins.faa > /dev/null"
+    )
 
-    if not line:
-        break
+    # 4. Compare the results with the Cas gene master list to check
+    # correctness of matches
+    f = open("summary.txt", "r")
 
-    if line[0] == "#":
+    while True:
+        line = f.readline()
+
+        if not line:
+            break
+
+        if line[0] == "#":
+            continue
+
+        if genome_name is None:
+            # target name is the first column in the summary table, and
+            # formatted like "abc.123"
+            genome_name = line.split(".")[0]
+
+        # the domains appear at the end of the line, under the
+        # "description of target" column. this regex ensures they are matched
+        # quickly and simply.
+        match = re.search("# ([0-9]+) # ([0-9]+) #", line)
+
+        if match:
+            domain_start = int(match.group(1))
+            domain_end = int(match.group(2))
+
+            targets.append((domain_start, domain_end, CAS_TYPE))
+
+    if not genome_name:
         continue
 
-    if genome_name is None:
-        # target name is the first column in the summary table, and
-        # formatted like "abc.123"
-        genome_name = line.split(".")[0]
-
-    # the domains appear at the end of the line, under the
-    # "description of target" column. this regex ensures they are matched
-    # quickly and simply.
-    match = re.search("# ([0-9]+) # ([0-9]+) #", line)
-
-    if match:
-        domain_start = int(match.group(1))
-        domain_end = int(match.group(2))
-
-        targets.append((domain_start, domain_end))
+# Stop timer here
+toc = time.perf_counter()
 
 # 5. Check Cas masterlist for correct matches
 
@@ -84,7 +90,7 @@ section_lines = section.splitlines()
 target_section_lines = section_lines[1 : len(section_lines)]
 
 genome_crispr_sequences = []
-expected_cas_genes = 0  # Number of genes that match CAS_TYPE in this genome
+expected_cas_genes = []  # Number of genes that match CAS_TYPE in this genome
 
 for line in target_section_lines:
     columns = line.split("\t")
@@ -92,18 +98,19 @@ for line in target_section_lines:
     domain = columns[1]
     sequence_family = columns[9]
 
-    if sequence_family == CAS_TYPE:
-        expected_cas_genes += 1
+    if sequence_family != "CRISPR":
+        expected_cas_genes.append(sequence_family)
 
     genome_crispr_sequences.append((domain, sequence_family))
 
+expected_cas_genes = len(set(expected_cas_genes))
 correct_targets = 0  # Number of targets correctly identified as CAS_TYPE genes
 
 for target in targets:
     # Format the domain like domain_start..domain_end
     domain_str = f"{target[0]}..{target[1]}"
 
-    if (domain_str, CAS_TYPE) in genome_crispr_sequences:
+    if (domain_str, target[2]) in genome_crispr_sequences:
         correct_targets += 1
 
 # How many targets were correct out of all targets?
