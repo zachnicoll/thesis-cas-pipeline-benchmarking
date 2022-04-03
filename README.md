@@ -2,6 +2,10 @@
 
 ### Quick Start
 
+Run `download_genomes.R` in RStudio to download a set of genomes to detect Cas genes in.
+
+Then,
+
 ```py
 python process_profiler.py
 ```
@@ -33,7 +37,9 @@ This python script carries out the following pipeline for detecting Cas (CRISPR-
 
 5. Collect statistics on how many matches were correctly identified (precision and recall).
 
-## TODO:
+### Genome Downloading
 
-- [ ] Perform pipeline for multiple genomes and aggregate statistics
-- [ ] Command line args for cas type, alignment file, and genome files/directory
+`download_genomes.R` downloads a set of genomes in .fasta format from the the NCBI API. All of these genomes are guaranteed to contain some type of Cas gene, as they are pulled straight out of the annotated Cas gene genome file `cas1903.isl.type.txt`.
+
+Doing this allows us to test the script exclusively against genomes that we know *should* contain Cas genes, and so no time is wasted testing the detection flow against genomes that don't contain any Cas genes.
+
