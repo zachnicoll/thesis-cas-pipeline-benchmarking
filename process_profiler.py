@@ -3,13 +3,16 @@ import pathlib
 import re
 import time
 
+# 1. Load all Cas gene profiles from profiles folder
 profiles = list(pathlib.Path("./profiles").glob("*.hmm"))
 
 # Start timer here to measure speed of prodigal and hmmsearch steps
-tic = time.perf_counter()
+prodigal_start = time.perf_counter()
 
 # 2. Create list of all proteins in genome with Prodigal
 os.system("prodigal -i genomes.fasta -a proteins.faa > /dev/null")
+
+prodigal_stop = time.perf_counter()
 
 # 3. Use hmmer to search the protetins list for Cas proteins
 
@@ -17,6 +20,10 @@ os.system("prodigal -i genomes.fasta -a proteins.faa > /dev/null")
 # (target_name, domain_start, domain_end)
 targets = []
 genome_names = []
+
+print("Running proteins against Cas .hmm profiles...")
+
+hmmer_start = time.perf_counter()
 
 for profile in profiles:
     CAS_TYPE = profile.name.split("_")[0].lower()
@@ -56,10 +63,7 @@ for profile in profiles:
 
             targets.append((domain_start, domain_end, CAS_TYPE, genome_name))
 
-print(targets)
-
-# Stop timer here
-toc = time.perf_counter()
+hmmer_stop = time.perf_counter()
 
 # 5. Check Cas masterlist for correct matches
 
@@ -121,8 +125,11 @@ precision = correct_targets / len(targets)
 # Were all the cas genes detected, that should have been detected?
 recall = correct_targets / expected_cas_genes if expected_cas_genes > 0 else 0
 
-time_spent = toc - tic
+prodigal_time = prodigal_stop - prodigal_start
+hmmer_time = hmmer_stop - hmmer_start
 
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
-print(f"prodigal and hmmsearch took: {time_spent} seconds")
+print(f"prodigal took: {prodigal_time} seconds")
+print(f"hmmsearch took: {hmmer_time} seconds")
+print(f"For a total runtime of: {prodigal_time + hmmer_time} seconds")
