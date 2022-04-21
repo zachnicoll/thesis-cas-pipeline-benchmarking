@@ -1,4 +1,4 @@
-from pipelines.parse_groundtruth import parse_groundtruth
+from modules.groundtruth import parse_groundtruth
 from pipelines.prodigal_hmmer_pipeline import prodigal_hmmer_pipeline
 
 

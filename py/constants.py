@@ -1,12 +1,24 @@
-GROUNDTRUTH_FILENAME = "./data_acquisition/crispr_groundtruth.txt"
+# Groundtruth Files
+GROUNDTRUTH_FILENAME = "data_acquisition/crispr_groundtruth.txt"
 GROUNDTRUTH_JSON_FILENAME = "groundtruth.json"
 
-# ------------------------- Loci Header Indices ------------------------- #
+# Loci Header Indices
 LOCI_HEADER_GENBANK_ID_INDEX = 4
 
-# ---------------------- Loci Description Indices ---------------------- #
+# Loci Description Indices
 LOCI_DESCRIPTION_DOMAIN_INDEX = 1
 LOCI_DESCRIPTION_CRISPR_INDEX = 7
 LOCI_DESCRIPTION_PROFILES_INDEX = 8
 LOCI_DESCRIPTION_SEQUENCE_FAMILIES_INDEX = 9
 LOCI_DESCRIPTION_SYSTEM_SUBTYPE_INDEX = 10
+
+# Prodigal
+PRODIGAL_INPUT_FILENAME = "data_acquisition/genomes.fasta"
+PRODIGAL_OUTPUT_FILENAME = "proteins.faa"
+
+# hmmer
+HMMSEARCH_OUTPUT_FILENAME = "summary.txt"
+HMM_SUMMARY_ID_INDEX = 0
+HMM_SUMMARY_SCORE_INDEX = 5
+HMM_SUMMARY_DOMAIN_START_INDEX = 19
+HMM_SUMMARY_DOMAIN_END_INDEX = 21

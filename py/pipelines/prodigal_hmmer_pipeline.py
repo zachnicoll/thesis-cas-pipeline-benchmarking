@@ -1,7 +1,6 @@
-import os
-import pathlib
-import re
-import time
+from modules.prodigal import run_prodigal
+from models.GenePrediction import GenePredictionResults
+from modules.hmmsearch import run_hmmsearch
 
 """
 TODO: Account for partial matches of Cas genes
@@ -10,81 +9,14 @@ of the match is correct. Determine a scoring system for this.
 """
 
 
-def prodigal_hmmer_pipeline():
-    # 1. Load all Cas gene profiles from profiles folder
-    profiles = list(pathlib.Path("./profiles").glob("*.hmm"))
+def prodigal_hmmer_pipeline() -> GenePredictionResults:
+    prodigal_run_time = run_prodigal()
+    (prediction_result, hmmer_run_time) = run_hmmsearch()
 
-    # Start timer here to measure speed of prodigal and hmmsearch steps
-    prodigal_start = time.perf_counter()
+    print(f"Total runtime: {prodigal_run_time + hmmer_run_time}")
 
-    # 2. Create list of all proteins in genome with Prodigal
-    os.system(
-        "prodigal \
-        -i ./data_acquisition/genomes.fasta \
-        -a proteins.faa > /dev/null"
-    )
-
-    prodigal_stop = time.perf_counter()
-
-    # 3. Use hmmer to search the protetins list for Cas proteins
-
-    # Store each matched protein in this array as a tuple:
-    # (target_name, domain_start, domain_end)
-    targets = []
-    genome_names = []
-
-    print("Running proteins against Cas .hmm profiles...")
-
-    hmmer_start = time.perf_counter()
-
-    for profile in profiles:
-        CAS_TYPE = profile.name.split("_")[0].lower()
-
-        os.system(
-            f"hmmsearch \
-                --tblout summary.txt \
-                {profile.absolute()} \
-                proteins.faa \
-                > /dev/null"
-        )
-
-        # 4. Compare the results with the Cas gene master list to check
-        # correctness of matches
-        f = open("summary.txt", "r")
-
-        while True:
-            line = f.readline()
-
-            if not line:
-                break
-
-            if line[0] == "#":
-                continue
-
-            # target name is the first column in the summary table, and
-            # formatted like "abc.123"
-            genome_name = line.split(".")[0]
-
-            if genome_name:
-                genome_names.append(genome_name)
-
-            # the domains appear at the end of the line, under the
-            # "description of target" column. this regex ensures
-            # they are matched quickly and simply.
-            match = re.search("# ([0-9]+) # ([0-9]+) #", line)
-
-            if match:
-                domain_start = int(match.group(1))
-                domain_end = int(match.group(2))
-
-                targets.append(
-                    (domain_start, domain_end, CAS_TYPE, genome_name))
-
-    hmmer_stop = time.perf_counter()
-
-    # 5. Check Cas masterlist for correct matches
-
-    masterlist_name = "./data_acquisition/crispr_groundtruth.txt"
+    return
+    masterlist_name = "data_acquisition/crispr_groundtruth.txt"
     f = open(masterlist_name)
     masterlist = f.read()  # read file as string for str operations
 
@@ -127,7 +59,8 @@ def prodigal_hmmer_pipeline():
                 expected_cas_genes.append(sequence_family)
 
             genome_crispr_sequences.append(
-                (domain, sequence_family, genome_name))
+                (domain, sequence_family, genome_name)
+            )
 
     expected_cas_genes = len(set(expected_cas_genes))
     correct_targets = 0  # Number of targets correctly identified as CAS_TYPE genes
