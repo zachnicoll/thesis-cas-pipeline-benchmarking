@@ -2,4 +2,12 @@
 *.faa
 summary.txt
 genomes.fasta
-.Rhistory
+groundtruth.json
+
+# Don't ignore .R files
+!.R
+
+# But ignore any file with characters after .R e.g. .Rhistory
+.R*
+
+.vscode
