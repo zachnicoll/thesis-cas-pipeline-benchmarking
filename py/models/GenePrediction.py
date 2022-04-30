@@ -1,8 +1,12 @@
+from typing import List, Optional, Dict
+
+
 class GenePredictionInfo:
     cas_sequence_family: str
     start_domain: int
     end_domain: int
     score: float
+    accuracy: Optional[float]
 
     def __init__(self,
                  cas_sequence_family: str,
@@ -13,16 +17,48 @@ class GenePredictionInfo:
         self.start_domain = start_domain
         self.end_domain = end_domain
         self.score = score
+        self.accuracy = None
 
 
 class GenePredictionResults:
-    results: "dict[str, list[GenePredictionInfo]]"
+    results: Dict[str, List[GenePredictionInfo]]
 
     def __init__(self) -> None:
         self.results = {}
 
-    def add_result(self, genbank_id: str, gene_info: GenePredictionInfo):
+    def add_result(self, genbank_id: str, gene_info: GenePredictionInfo) -> None:
         if genbank_id in self.results:
-            self.results[genbank_id].append(gene_info)
+            duplicate_result = GenePredictionResults.__duplicate_exists__(
+                self.results[genbank_id], gene_info)
+
+            if not duplicate_result:
+                self.results[genbank_id].append(gene_info)
         else:
             self.results[genbank_id] = [gene_info]
+
+    def get_sorted_results(self, genbank_id: str) -> List[GenePredictionInfo]:
+        """
+        Returns the results for a given genome, sorted descending by score.
+        """
+        self.results[genbank_id].sort(
+            reverse=True, key=lambda info: info.score)
+        return self.results[genbank_id]
+
+    @staticmethod
+    def __compare_results__(result_a: GenePredictionInfo, result_b: GenePredictionInfo) -> bool:
+        """
+        Returns true if result_a has the same cas_sequence_family,
+        start_domain, and end_domain. Used for detecting duplicate results,
+        which hmmer is capable of producing.
+        """
+        return (result_a.cas_sequence_family == result_b.cas_sequence_family and
+                result_a.start_domain == result_b.start_domain and
+                result_a.end_domain == result_b.end_domain)
+
+    @staticmethod
+    def __duplicate_exists__(existing_results: List[GenePredictionInfo], new_result: GenePredictionInfo) -> bool:
+        for existing_result in existing_results:
+            if GenePredictionResults.__compare_results__(existing_result, new_result):
+                return True
+
+        return False

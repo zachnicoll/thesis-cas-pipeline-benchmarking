@@ -20,7 +20,7 @@ def parse_gene_row(row: "list[str]") -> Gene:
     [start_domain, end_domain] = map(
         int, row[LOCI_DESCRIPTION_DOMAIN_INDEX].split("..")
     )
-    is_crispr_cas = row[LOCI_DESCRIPTION_CRISPR_INDEX]
+    is_crispr_cas = row[LOCI_DESCRIPTION_CRISPR_INDEX] == "+"
     profiles = row[LOCI_DESCRIPTION_PROFILES_INDEX].split(",")
     sequence_families = row[LOCI_DESCRIPTION_SEQUENCE_FAMILIES_INDEX].split(
         ",")
@@ -37,7 +37,11 @@ def parse_gene_row(row: "list[str]") -> Gene:
 
 
 def parse_groundtruth() -> GroundTruth:
+    print("Parsing groundtruth genome data...")
+
     if exists(GROUNDTRUTH_JSON_FILENAME):
+        print("Existing genome.json file found, loading contents.")
+
         # Cached JSON file exists, serialize it as a GroundTruth object
         groundtruth_json = json.load(open(GROUNDTRUTH_JSON_FILENAME))
         return GroundTruth.from_json(groundtruth_json)

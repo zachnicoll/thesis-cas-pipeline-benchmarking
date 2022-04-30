@@ -1,3 +1,4 @@
+from typing import Tuple
 from modules.prodigal import run_prodigal
 from models.GenePrediction import GenePredictionResults
 from modules.hmmsearch import run_hmmsearch
@@ -9,13 +10,20 @@ of the match is correct. Determine a scoring system for this.
 """
 
 
-def prodigal_hmmer_pipeline() -> GenePredictionResults:
-    prodigal_run_time = run_prodigal()
+def prodigal_hmmer_pipeline(execute_prodigal=True) -> Tuple[GenePredictionResults, float, float]:
+    """
+    Runs prodigal to data_acquisition/genomes.fasta into a set of proteins.
+    Then, each Cas gene .hmm profile is run against the set of proteins
+    using hmmersearch to determine if certain Cas genes exist in the genome.
+
+    Returns (prediction_result, prodigal_run_time, hmmer_run_time)
+    """
+
+    prodigal_run_time = run_prodigal() if execute_prodigal else 0
     (prediction_result, hmmer_run_time) = run_hmmsearch()
 
-    print(f"Total runtime: {prodigal_run_time + hmmer_run_time}")
+    return (prediction_result, prodigal_run_time, hmmer_run_time)
 
-    return
     masterlist_name = "data_acquisition/crispr_groundtruth.txt"
     f = open(masterlist_name)
     masterlist = f.read()  # read file as string for str operations
