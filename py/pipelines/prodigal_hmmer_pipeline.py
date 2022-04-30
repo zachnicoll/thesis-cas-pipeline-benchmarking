@@ -4,7 +4,9 @@ from models.GenePrediction import GenePredictionResults
 from modules.hmmsearch import run_hmmsearch
 
 
-def prodigal_hmmer_pipeline(execute_prodigal=True) -> Tuple[GenePredictionResults, float, float]:
+def prodigal_hmmer_pipeline(
+    execute_prodigal=True
+) -> Tuple[GenePredictionResults, float, float]:
     """
     Runs prodigal to data_acquisition/genomes.fasta into a set of proteins.
     Then, each Cas gene .hmm profile is run against the set of proteins

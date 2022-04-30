@@ -23,7 +23,7 @@ HMM_SUMMARY_SCORE_INDEX = 5
 HMM_SUMMARY_DOMAIN_START_INDEX = 19
 HMM_SUMMARY_DOMAIN_END_INDEX = 21
 # TODO: Determine "good" score threshold
-HMM_THRESHOLD_SCORE = 10000.0
+HMM_THRESHOLD_SCORE = 0.0
 
 # Statistical Analysis
 DOMAIN_TOLERANCE = 0.1  # Predicted domains can be within 10% of ground truth

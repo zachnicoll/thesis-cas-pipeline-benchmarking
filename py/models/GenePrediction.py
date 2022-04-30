@@ -26,7 +26,11 @@ class GenePredictionResults:
     def __init__(self) -> None:
         self.results = {}
 
-    def add_result(self, genbank_id: str, gene_info: GenePredictionInfo) -> None:
+    def add_result(
+        self,
+        genbank_id: str,
+        gene_info: GenePredictionInfo
+    ) -> None:
         if genbank_id in self.results:
             # Check if an identical result already exists
             duplicate_result = GenePredictionResults.__duplicate_exists__(
@@ -47,7 +51,10 @@ class GenePredictionResults:
         return self.results[genbank_id]
 
     @staticmethod
-    def __compare_results__(result_a: GenePredictionInfo, result_b: GenePredictionInfo) -> bool:
+    def __compare_results__(
+        result_a: GenePredictionInfo,
+        result_b: GenePredictionInfo
+    ) -> bool:
         """
         Returns true if result_a has the same cas_sequence_family,
         start_domain, and end_domain. Used for detecting duplicate results,
@@ -58,9 +65,15 @@ class GenePredictionResults:
                 result_a.end_domain == result_b.end_domain)
 
     @staticmethod
-    def __duplicate_exists__(existing_results: List[GenePredictionInfo], new_result: GenePredictionInfo) -> bool:
+    def __duplicate_exists__(
+        existing_results: List[GenePredictionInfo],
+        new_result: GenePredictionInfo
+    ) -> bool:
         for existing_result in existing_results:
-            if GenePredictionResults.__compare_results__(existing_result, new_result):
+            if GenePredictionResults.__compare_results__(
+                existing_result,
+                new_result
+            ):
                 return True
 
         return False

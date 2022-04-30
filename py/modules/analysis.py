@@ -128,7 +128,7 @@ def pipeline_statistics(
         precisions.append(p)
         recalls.append(r)
 
-    average_precision = mean(precisions)
-    average_recall = mean(recalls)
+    average_precision = mean(precisions) if len(precisions) > 0 else 0.0
+    average_recall = mean(recalls) if len(recalls) > 0 else 0.0
 
     return (average_precision, average_recall)
