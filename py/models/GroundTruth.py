@@ -37,8 +37,10 @@ class Genome:
     def __init__(self) -> None:
         self.genes = []
 
-    def get_candidates_for_prediction(self, prediction: GenePredictionInfo) \
-            -> List[Gene]:
+    def get_candidates_for_prediction(
+        self,
+        prediction: GenePredictionInfo
+    ) -> List[Gene]:
         """
         Get all genes in the genome that are of the same Cas sequence
         family.

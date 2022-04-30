@@ -9,7 +9,8 @@ from constants import (
     HMM_SUMMARY_ID_INDEX,
     HMM_SUMMARY_DOMAIN_START_INDEX,
     HMM_SUMMARY_DOMAIN_END_INDEX,
-    HMM_SUMMARY_SCORE_INDEX)
+    HMM_SUMMARY_SCORE_INDEX,
+    HMM_THRESHOLD_SCORE)
 from models.GenePrediction import GenePredictionResults, GenePredictionInfo
 
 
@@ -70,7 +71,8 @@ def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
                     row
                 )
 
-                gene_predictions.add_result(genbank_id, gene_info)
+                if gene_info.score >= HMM_THRESHOLD_SCORE:
+                    gene_predictions.add_result(genbank_id, gene_info)
 
     hmmer_stop = time.perf_counter()
     hmmer_run_time = hmmer_stop - hmmer_start

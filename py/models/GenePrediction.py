@@ -28,9 +28,11 @@ class GenePredictionResults:
 
     def add_result(self, genbank_id: str, gene_info: GenePredictionInfo) -> None:
         if genbank_id in self.results:
+            # Check if an identical result already exists
             duplicate_result = GenePredictionResults.__duplicate_exists__(
                 self.results[genbank_id], gene_info)
 
+            # Only add result if it's unique (hmmer produces duplicates)
             if not duplicate_result:
                 self.results[genbank_id].append(gene_info)
         else:
