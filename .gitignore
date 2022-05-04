@@ -3,6 +3,7 @@
 summary.txt
 genomes.fasta
 groundtruth.json
+database.hmm
 
 # Don't ignore .R files
 !.R

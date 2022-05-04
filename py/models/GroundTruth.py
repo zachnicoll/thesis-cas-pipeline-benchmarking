@@ -48,7 +48,7 @@ class Genome:
 
         relevant_genes = filter(
             lambda gene:
-                prediction.cas_sequence_family in gene.sequence_families,
+                prediction.profile in gene.profiles,
             self.genes
         )
 

@@ -40,7 +40,7 @@ def parse_groundtruth() -> GroundTruth:
     print("Parsing groundtruth genome data...")
 
     if exists(GROUNDTRUTH_JSON_FILENAME):
-        print("Existing genome.json file found, loading contents.")
+        print(f"Existing {GROUNDTRUTH_FILENAME} file found, loading contents.")
 
         # Cached JSON file exists, serialize it as a GroundTruth object
         groundtruth_json = json.load(open(GROUNDTRUTH_JSON_FILENAME))

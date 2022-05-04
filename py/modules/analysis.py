@@ -78,7 +78,8 @@ def genome_prediction_statistics(
 
                 if predicted_domain_is_within_error_margins(
                         true_start_domain, true_end_domain,
-                        predicted_start_domain, predicted_end_domain):
+                        predicted_start_domain, predicted_end_domain
+                ):
                     # Ensure that accuracy is always <= 1.0 by selecting
                     # the larger denominator
                     accuracy = (predicted_domain_span / true_domain_span
