@@ -3,8 +3,8 @@ import json
 from os.path import exists
 import re
 
-from models.GroundTruth import Gene, GroundTruth
-from constants import (
+from py.models.GroundTruth import Gene, GroundTruth
+from py.constants import (
     GROUNDTRUTH_FILENAME,
     GROUNDTRUTH_JSON_FILENAME,
     LOCI_HEADER_GENBANK_ID_INDEX,

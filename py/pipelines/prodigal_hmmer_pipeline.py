@@ -1,7 +1,7 @@
 from typing import Tuple
-from modules.prodigal import run_prodigal
-from models.GenePrediction import GenePredictionResults
-from modules.hmmsearch import run_hmmsearch
+from py.modules.prodigal import run_prodigal
+from py.models.GenePrediction import GenePredictionResults
+from py.modules.hmmsearch import run_hmmsearch
 
 
 def prodigal_hmmer_pipeline(

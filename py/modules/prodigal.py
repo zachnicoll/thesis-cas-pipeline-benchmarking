@@ -1,6 +1,6 @@
 import os
 import time
-from constants import PRODIGAL_INPUT_FILENAME, PRODIGAL_OUTPUT_FILENAME
+from py.constants import PRODIGAL_INPUT_FILENAME, PRODIGAL_OUTPUT_FILENAME
 
 
 def run_prodigal() -> int:

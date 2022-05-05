@@ -1,6 +1,6 @@
-from pipelines.prodigal_hmmer_pipeline import prodigal_hmmer_pipeline
-from modules.groundtruth import parse_groundtruth
-from modules.analysis import pipeline_statistics
+from py.pipelines.prodigal_hmmer_pipeline import prodigal_hmmer_pipeline
+from py.modules.groundtruth import parse_groundtruth
+from py.modules.analysis import pipeline_statistics
 
 
 def main():

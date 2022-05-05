@@ -1,5 +1,5 @@
 from typing import List
-from models.GenePrediction import GenePredictionInfo
+from py.models.GenePrediction import GenePredictionInfo
 
 
 class Gene:

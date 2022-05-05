@@ -1,8 +1,9 @@
 from statistics import mean
 from typing import List, Tuple
-from models.GroundTruth import Genome, GroundTruth
-from models.GenePrediction import GenePredictionInfo, GenePredictionResults
-from constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE
+from py.models.GroundTruth import Genome, GroundTruth
+from py.models.GenePrediction import GenePredictionInfo, GenePredictionResults
+from py.constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE
+from py.modules.profile_map import parse_profile_family_map
 
 
 def precision(TP: float, FP: float) -> float:
@@ -118,7 +119,7 @@ def pipeline_statistics(
     calculate the average precision and recall of all predictions.
     """
 
-    # cas_profile_families = parse_profile_family_map()
+    cas_profile_families = parse_profile_family_map()
 
     precisions = []
     recalls = []

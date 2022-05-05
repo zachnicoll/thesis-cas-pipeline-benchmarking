@@ -1,5 +1,5 @@
 from typing import Dict
-from models.CasProfileFamily import CasProfileFamily
+from py.models.CasProfileFamily import CasProfileFamily
 
 
 def parse_profile_family_map() -> Dict[str, CasProfileFamily]:

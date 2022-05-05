@@ -2,7 +2,7 @@ import os
 import re
 import time
 from typing import Tuple
-from constants import (
+from py.constants import (
     HMM_DB_FILENAME,
     PRODIGAL_OUTPUT_FILENAME,
     HMMSEARCH_OUTPUT_FILENAME,
@@ -11,7 +11,7 @@ from constants import (
     HMM_SUMMARY_DOMAIN_END_INDEX,
     HMM_SUMMARY_SCORE_INDEX,
     HMM_THRESHOLD_SCORE)
-from models.GenePrediction import GenePredictionResults, GenePredictionInfo
+from py.models.GenePrediction import GenePredictionResults, GenePredictionInfo
 
 
 def parse_summary_row(row: str) \
