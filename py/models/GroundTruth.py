@@ -48,14 +48,15 @@ class Genome:
 
         relevant_genes = filter(
             lambda gene:
-                prediction.profile in gene.profiles,
+                (prediction.profile in gene.profiles),
             self.genes
         )
 
         return list(relevant_genes)
 
     def add_gene(self, gene: Gene) -> None:
-        self.genes.append(gene)
+        if "CRISPR" not in gene.profiles:
+            self.genes.append(gene)
 
 
 class GroundTruth:

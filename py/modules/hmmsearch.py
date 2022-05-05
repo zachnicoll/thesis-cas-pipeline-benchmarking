@@ -30,7 +30,6 @@ def parse_summary_row(row: str) \
     return (
         genbank_id,
         GenePredictionInfo(
-            "",  # TODO: Do we need cas sequence family now?
             profile,
             start_domain,
             end_domain,
@@ -48,11 +47,12 @@ def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
 
     os.system(
         f"hmmsearch \
-            --noali \
+            -o /dev/null \
             --tblout {HMMSEARCH_OUTPUT_FILENAME} \
+            -E 1.0e-50 \
             {HMM_DB_FILENAME} \
             {PRODIGAL_OUTPUT_FILENAME} \
-            > /dev/null"
+        "
     )
 
     summary_file = open(HMMSEARCH_OUTPUT_FILENAME, "r")
