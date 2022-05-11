@@ -6,6 +6,7 @@ class GenePredictionInfo:
     start_domain: int
     end_domain: int
     score: float
+    e_val: float
     accuracy: Optional[float]
     visited: Optional[bool]
 
@@ -13,11 +14,13 @@ class GenePredictionInfo:
                  profile: str,
                  start_domain: int,
                  end_domain: int,
-                 score: float) -> None:
+                 score: float,
+                 e_val: float) -> None:
         self.profile = profile
         self.start_domain = start_domain
         self.end_domain = end_domain
         self.score = score
+        self.e_val = e_val
         self.accuracy = None
         self.visited = False
 

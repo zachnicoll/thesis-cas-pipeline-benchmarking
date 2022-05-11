@@ -10,7 +10,8 @@ from py.constants import (
     HMM_SUMMARY_DOMAIN_START_INDEX,
     HMM_SUMMARY_DOMAIN_END_INDEX,
     HMM_SUMMARY_SCORE_INDEX,
-    HMM_THRESHOLD_SCORE)
+    HMM_THRESHOLD_SCORE,
+    HMM_SUMMARY_E_INDEX)
 from py.models.GenePrediction import GenePredictionResults, GenePredictionInfo
 
 
@@ -26,6 +27,7 @@ def parse_summary_row(row: str) \
     # TODO: Use this score to filter out results
     # if score is below threshold
     hmm_score: float = float(row[HMM_SUMMARY_SCORE_INDEX])
+    hmm_e_val: float = float(row[HMM_SUMMARY_E_INDEX])
 
     return (
         genbank_id,
@@ -33,7 +35,8 @@ def parse_summary_row(row: str) \
             profile,
             start_domain,
             end_domain,
-            hmm_score
+            hmm_score,
+            hmm_e_val
         )
     )
 
@@ -49,7 +52,7 @@ def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
         f"hmmsearch \
             -o /dev/null \
             --tblout {HMMSEARCH_OUTPUT_FILENAME} \
-            -E 1.0e-50 \
+            -E 1.0e-100 \
             {HMM_DB_FILENAME} \
             {PRODIGAL_OUTPUT_FILENAME} \
         "

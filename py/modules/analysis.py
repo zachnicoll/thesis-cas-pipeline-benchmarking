@@ -148,6 +148,8 @@ def pipeline_statistics(
     precisions = []
     recalls = []
     accuracies = []
+    tp_e_vals = []
+    fp_e_vals = []
 
     for genbank_id in prediction_results.results:
         print(f"Analysing results for {genbank_id}...")
@@ -155,7 +157,7 @@ def pipeline_statistics(
         genome = groundtruth.genomes[genbank_id]
         predictions = prediction_results.get_sorted_results(genbank_id)
 
-        (p, r, TPs, FPs) = genome_prediction_statistics(genome, predictions)
+        (_, _, TPs, FPs) = genome_prediction_statistics(genome, predictions)
 
         for gene in genome.genes:
             for profile in gene.profiles:
@@ -186,18 +188,22 @@ def pipeline_statistics(
 
             count_of_families[family].false_positives += 1
 
-    for family in count_of_families:
-        cf = count_of_families[family]
-        family_precision = precision(
-            cf.true_positives, cf.false_positives)
-        family_recall = recall(
-            cf.true_positives, cf.false_negatives())
-        family_accuracy = cf.true_positives / \
-            (cf.true_positives+cf.false_positives+cf.false_negatives())
+        if len(TPs) > 0:
+            # average_tp_e = mean(map(lambda tp: tp.e_val, TPs))
+            tp_e_vals += list(map(lambda tp: tp.e_val, TPs))
 
-        precisions.append(family_precision)
-        recalls.append(family_recall)
-        accuracies.append(family_accuracy)
+        if len(FPs) > 0:
+            # average_fp_e = mean(map(lambda fp: fp.e_val, FPs))
+            fp_e_vals += list(map(lambda fp: fp.e_val, FPs))
+
+    for family in count_of_families:
+        (p, r, a) = family_stats(count_of_families[family])
+        precisions.append(p)
+        recalls.append(r)
+        accuracies.append(a)
+
+    print(f"Average E-Value of TP: {mean(tp_e_vals)}")
+    print(f"Average E-Value of FP: {mean(fp_e_vals)}")
 
     write_per_family_statistics_to_file(count_of_families)
 
@@ -208,20 +214,25 @@ def pipeline_statistics(
     return (average_precision, average_recall, average_accuracy)
 
 
+def family_stats(family: CasFamilyCount) -> Tuple[float, float, float]:
+    TPs = family.true_positives
+    FPs = family.false_positives
+    FNs = family.false_negatives()
+    p = precision(TPs, FPs)
+    r = recall(TPs, FNs)
+    a = accuracy(TPs, FPs, FNs)
+
+    return (p, r, a)
+
+
 def write_per_family_statistics_to_file(
     family_counts: Dict[str, CasFamilyCount]
 ) -> None:
     table = "Family,Precision,Recall,Accuracy\n"
 
     for family in family_counts:
-        TPs = family_counts[family].true_positives
-        FPs = family_counts[family].false_positives
-        FNs = family_counts[family].false_negatives()
-        family_precision = precision(TPs, FPs)
-        family_recall = recall(TPs, FNs)
-        family_accuracy = accuracy(TPs, FPs, FNs)
-
-        table += f"{family},{family_precision},{family_recall},{family_accuracy}\n"
+        (p, r, a) = family_stats(family_counts[family])
+        table += f"{family},{p},{r},{a}\n"
 
     f = open("family_statistics.csv", 'r+')
     f.truncate(0)
