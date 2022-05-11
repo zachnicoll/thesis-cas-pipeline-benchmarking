@@ -6,6 +6,6 @@ class CasProfileFamily:
     family: str
     types: List[str]
 
-    def __init__(self, family: str, type: List[str]) -> None:
+    def __init__(self, family: str, types: List[str]) -> None:
         self.family = family
-        self.type = type
+        self.types = types

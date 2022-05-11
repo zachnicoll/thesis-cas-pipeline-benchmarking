@@ -15,7 +15,8 @@ def main():
 
     (
         hmmer_precision,
-        hmmer_recall
+        hmmer_recall,
+        hmmer_accuracy
     ) = pipeline_statistics(groundtruth, hmmer_predictions)
 
     print(f"""
@@ -23,6 +24,7 @@ def main():
     Genomes Predicted: {len(hmmer_predictions.results)}
     Precision: {hmmer_precision * 100}%
     Recall: {hmmer_recall * 100}%
+    Accuracy: {hmmer_accuracy * 100}%
     Total Runtime: {prodigal_run_time + hmmer_run_time}s
 """)
 

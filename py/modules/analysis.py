@@ -1,17 +1,41 @@
 from statistics import mean
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from py.models.GroundTruth import Genome, GroundTruth
 from py.models.GenePrediction import GenePredictionInfo, GenePredictionResults
 from py.constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE
 from py.modules.profile_map import parse_profile_family_map
 
 
+class CasFamilyCount:
+    actual_count: int
+    true_positives: int
+    false_positives: int
+
+    def __init__(self) -> None:
+        self.actual_count = 0
+        self.true_positives = 0
+        self.false_positives = 0
+
+    def false_negatives(self) -> int:
+        return self.actual_count - self.true_positives
+
+
 def precision(TP: float, FP: float) -> float:
+    if TP == 0:
+        return 0
     return TP / (TP + FP)
 
 
 def recall(TP: float, FN: float) -> float:
+    if TP == 0:
+        return 0
     return TP / (TP + FN)
+
+
+def accuracy(TP: float, FP: float, FN: float) -> float:
+    if TP == 0:
+        return 0
+    return TP / (TP + FP + FN)
 
 
 def predicted_domain_is_within_error_margins(
@@ -39,13 +63,13 @@ def predicted_domain_is_within_error_margins(
 def genome_prediction_statistics(
     genome_truth: Genome,
     predictions: List[GenePredictionInfo]
-) -> Tuple[float, float]:
+) -> Tuple[float, float, List[GenePredictionInfo], List[GenePredictionInfo]]:
     """
     For a given genome and a set of predictions about that genome,
     find the precision and recall of the prediction results
     compared to the ground truth about that genome.
 
-    returns (precision, recall)
+    returns (precision, recall, TPs)
     """
 
     # Gene IS in groundtruth AND IS predicted
@@ -93,21 +117,20 @@ def genome_prediction_statistics(
                 prediction.visited = True
                 break
 
+    false_positives += list(filter(lambda p: not p.visited, predictions))
+
+    num_expected_genes = len(genome_truth.genes)
+    num_true_positives = len(true_positives)
     # False negatives are equivalent to the number of genes
     # hmmer DIDN'T predict correctly.
     # E.g. gene IS in groundtruth AND IS NOT predicted
-
-    num_expected_genes = len(genome_truth.genes)
-
-    num_true_positives = len(true_positives)
-    num_false_negatives = num_expected_genes - len(true_positives)
-    num_false_positives = len(false_positives) + \
-        sum(map(lambda p: not p.visited, predictions))
+    num_false_negatives = num_expected_genes - num_true_positives
+    num_false_positives = len(false_positives)
 
     p = precision(num_true_positives, num_false_positives)
     r = recall(num_true_positives, num_false_negatives)
 
-    return (p, r)
+    return (p, r, true_positives, false_positives)
 
 
 def pipeline_statistics(
@@ -120,9 +143,11 @@ def pipeline_statistics(
     """
 
     cas_profile_families = parse_profile_family_map()
+    count_of_families: Dict[str, CasFamilyCount] = {}
 
     precisions = []
     recalls = []
+    accuracies = []
 
     for genbank_id in prediction_results.results:
         print(f"Analysing results for {genbank_id}...")
@@ -130,12 +155,75 @@ def pipeline_statistics(
         genome = groundtruth.genomes[genbank_id]
         predictions = prediction_results.get_sorted_results(genbank_id)
 
-        (p, r) = genome_prediction_statistics(genome, predictions)
+        (p, r, TPs, FPs) = genome_prediction_statistics(genome, predictions)
 
-        precisions.append(p)
-        recalls.append(r)
+        for gene in genome.genes:
+            for profile in gene.profiles:
+                if profile in cas_profile_families:
+                    family = cas_profile_families[profile].family
+
+                    if family not in count_of_families:
+                        # Init the key/object pair if it doesn't exist yet
+                        count_of_families[family] = CasFamilyCount()
+
+                    count_of_families[family].actual_count += 1
+
+        for tp in TPs:
+            family = cas_profile_families[tp.profile].family
+
+            if family not in count_of_families:
+                # Init the key/object pair if it doesn't exist yet
+                count_of_families[family] = CasFamilyCount()
+
+            count_of_families[family].true_positives += 1
+
+        for fp in FPs:
+            family = cas_profile_families[fp.profile].family
+
+            if family not in count_of_families:
+                # Init the key/object pair if it doesn't exist yet
+                count_of_families[family] = CasFamilyCount()
+
+            count_of_families[family].false_positives += 1
+
+    for family in count_of_families:
+        cf = count_of_families[family]
+        family_precision = precision(
+            cf.true_positives, cf.false_positives)
+        family_recall = recall(
+            cf.true_positives, cf.false_negatives())
+        family_accuracy = cf.true_positives / \
+            (cf.true_positives+cf.false_positives+cf.false_negatives())
+
+        precisions.append(family_precision)
+        recalls.append(family_recall)
+        accuracies.append(family_accuracy)
+
+    write_per_family_statistics_to_file(count_of_families)
 
     average_precision = mean(precisions) if len(precisions) > 0 else 0.0
     average_recall = mean(recalls) if len(recalls) > 0 else 0.0
+    average_accuracy = mean(accuracies) if len(accuracies) > 0 else 0.0
 
-    return (average_precision, average_recall)
+    return (average_precision, average_recall, average_accuracy)
+
+
+def write_per_family_statistics_to_file(
+    family_counts: Dict[str, CasFamilyCount]
+) -> None:
+    table = "Family,Precision,Recall,Accuracy\n"
+
+    for family in family_counts:
+        TPs = family_counts[family].true_positives
+        FPs = family_counts[family].false_positives
+        FNs = family_counts[family].false_negatives()
+        family_precision = precision(TPs, FPs)
+        family_recall = recall(TPs, FNs)
+        family_accuracy = accuracy(TPs, FPs, FNs)
+
+        table += f"{family},{family_precision},{family_recall},{family_accuracy}\n"
+
+    f = open("family_statistics.csv", 'r+')
+    f.truncate(0)
+    f.write(table)
+    f.close()
