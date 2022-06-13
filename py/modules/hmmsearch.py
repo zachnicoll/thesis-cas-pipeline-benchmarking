@@ -52,7 +52,7 @@ def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
         f"hmmsearch \
             -o /dev/null \
             --tblout {HMMSEARCH_OUTPUT_FILENAME} \
-            -E 1e-30 \
+            -E {HMM_THRESHOLD_SCORE} \
             {HMM_DB_FILENAME} \
             {PRODIGAL_OUTPUT_FILENAME} \
         "

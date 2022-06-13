@@ -1,23 +1,10 @@
 from statistics import mean
 from typing import Dict, List, Tuple
+from py.models.CasFamilyCount import CasFamilyCount
 from py.models.GroundTruth import Genome, GroundTruth
 from py.models.GenePrediction import GenePredictionInfo, GenePredictionResults
 from py.constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE
 from py.modules.profile_map import parse_profile_family_map
-
-
-class CasFamilyCount:
-    actual_count: int
-    true_positives: int
-    false_positives: int
-
-    def __init__(self) -> None:
-        self.actual_count = 0
-        self.true_positives = 0
-        self.false_positives = 0
-
-    def false_negatives(self) -> int:
-        return self.actual_count - self.true_positives
 
 
 def precision(TP: float, FP: float) -> float:
@@ -145,18 +132,7 @@ def genome_prediction_statistics(
 
     false_positives += list(filter(lambda p: not p.visited, predictions))
 
-    num_expected_genes = len(genome_truth.genes)
-    num_true_positives = len(true_positives)
-    # False negatives are equivalent to the number of genes
-    # hmmer DIDN'T predict correctly.
-    # E.g. gene IS in groundtruth AND IS NOT predicted
-    num_false_negatives = num_expected_genes - num_true_positives
-    num_false_positives = len(false_positives)
-
-    p = precision(num_true_positives, num_false_positives)
-    r = recall(num_true_positives, num_false_negatives)
-
-    return (p, r, true_positives, false_positives)
+    return (true_positives, false_positives)
 
 
 def pipeline_statistics(
@@ -183,7 +159,7 @@ def pipeline_statistics(
         genome = groundtruth.genomes[genbank_id]
         predictions = prediction_results.get_sorted_results(genbank_id)
 
-        (_, _, TPs, FPs) = genome_prediction_statistics(genome, predictions)
+        (TPs, FPs) = genome_prediction_statistics(genome, predictions)
 
         for gene in genome.genes:
             for profile in gene.profiles:
