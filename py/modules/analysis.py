@@ -78,44 +78,70 @@ def genome_prediction_statistics(
     false_positives: List[GenePredictionInfo] = []
 
     for gene in genome_truth.genes:
+        highest_confidence: GenePredictionInfo = None
+
+        # Find the prediction relevant to this gene with the highest confidence score
         for prediction in predictions:
             if prediction.profile in gene.profiles and not prediction.visited:
-                if gene.start_domain == prediction.start_domain and \
-                        gene.end_domain == prediction.end_domain:
-                    prediction.accuracy = 1.0
-                    true_positives.append(prediction)
+                if (highest_confidence is None or
+                        prediction.score > highest_confidence.score):
+                    highest_confidence = prediction
+
+        if (highest_confidence is not None):
+            # Ensure that prediction is in the same domain as the gene
+            if gene.start_domain == highest_confidence.start_domain and \
+                    gene.end_domain == highest_confidence.end_domain:
+                highest_confidence.accuracy = 1.0
+                true_positives.append(highest_confidence)
+            else:
+                # Extract start and end domains
+                true_start_domain = gene.start_domain
+                true_end_domain = gene.end_domain
+
+                predicted_start_domain = highest_confidence.start_domain
+                predicted_end_domain = highest_confidence.end_domain
+
+                # Calculate domain span (length)
+                true_domain_span = true_end_domain - true_start_domain
+                predicted_domain_span = predicted_end_domain - \
+                    predicted_start_domain
+
+                if predicted_domain_is_within_error_margins(
+                        true_start_domain, true_end_domain,
+                        predicted_start_domain, predicted_end_domain
+                ):
+                    # Ensure that accuracy is always <= 1.0 by selecting
+                    # the larger denominator
+                    accuracy = (predicted_domain_span / true_domain_span
+                                if true_domain_span >= predicted_domain_span
+                                else true_domain_span / predicted_domain_span)
+                    highest_confidence.accuracy = accuracy
+
+                    # Prediction was correct, within error margins
+                    true_positives.append(highest_confidence)
                 else:
-                    # Extract start and end domains
-                    true_start_domain = gene.start_domain
-                    true_end_domain = gene.end_domain
+                    # Prediction was not correct or within error margins
+                    false_positives.append(highest_confidence)
 
-                    predicted_start_domain = prediction.start_domain
-                    predicted_end_domain = prediction.end_domain
+            highest_confidence.visited = True
 
-                    # Calculate domain span (length)
-                    true_domain_span = true_end_domain - true_start_domain
-                    predicted_domain_span = predicted_end_domain - \
-                        predicted_start_domain
-
-                    if predicted_domain_is_within_error_margins(
-                            true_start_domain, true_end_domain,
-                            predicted_start_domain, predicted_end_domain
-                    ):
-                        # Ensure that accuracy is always <= 1.0 by selecting
-                        # the larger denominator
-                        accuracy = (predicted_domain_span / true_domain_span
-                                    if true_domain_span >= predicted_domain_span
-                                    else true_domain_span / predicted_domain_span)
-                        prediction.accuracy = accuracy
-
-                        # Prediction was correct, within error margins
-                        true_positives.append(prediction)
-                    else:
-                        # Prediction was not correct or within error margins
-                        false_positives.append(prediction)
-
-                prediction.visited = True
-                break
+            # Remove all other predictions that fall within this prediction's domain.
+            # This reduces false positives, as a given domain can only be classified
+            # as a single gene.
+            predictions = list(filter(
+                lambda p:
+                not (
+                    # Domain is inside classified domain
+                    (p.start_domain >= highest_confidence.start_domain and
+                     p.end_domain <= highest_confidence.end_domain) or
+                    # Domain overlaps the start of classified domain
+                    (p.end_domain > highest_confidence.start_domain and
+                     p.start_domain < highest_confidence.start_domain) or
+                    # Domain overlaps the end of classified domain
+                    (p.end_domain > highest_confidence.end_domain and
+                     p.start_domain < highest_confidence.end_domain)
+                ),
+                predictions))
 
     false_positives += list(filter(lambda p: not p.visited, predictions))
 

@@ -52,7 +52,7 @@ def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
         f"hmmsearch \
             -o /dev/null \
             --tblout {HMMSEARCH_OUTPUT_FILENAME} \
-            -E 1.0e-100 \
+            -E 1e-30 \
             {HMM_DB_FILENAME} \
             {PRODIGAL_OUTPUT_FILENAME} \
         "
@@ -68,8 +68,7 @@ def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
             # Parse row and extract prediction info
             (genbank_id, gene_info) = parse_summary_row(row)
 
-            if gene_info.score >= HMM_THRESHOLD_SCORE:
-                gene_predictions.add_result(genbank_id, gene_info)
+            gene_predictions.add_result(genbank_id, gene_info)
 
     hmmer_stop = time.perf_counter()
     hmmer_run_time = hmmer_stop - hmmer_start
