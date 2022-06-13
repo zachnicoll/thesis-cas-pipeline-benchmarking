@@ -13,3 +13,4 @@ family_statistics.csv
 .R*
 
 .vscode
+__pycache__
