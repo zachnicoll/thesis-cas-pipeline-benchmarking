@@ -1,5 +1,5 @@
 from typing import List
-from models.GenePrediction import GenePredictionInfo
+from py.models.GenePrediction import GenePredictionInfo
 
 
 class Gene:
@@ -48,14 +48,15 @@ class Genome:
 
         relevant_genes = filter(
             lambda gene:
-                prediction.cas_sequence_family in gene.sequence_families,
+                (prediction.profile in gene.profiles),
             self.genes
         )
 
         return list(relevant_genes)
 
     def add_gene(self, gene: Gene) -> None:
-        self.genes.append(gene)
+        if "CRISPR" not in gene.profiles:
+            self.genes.append(gene)
 
 
 class GroundTruth:

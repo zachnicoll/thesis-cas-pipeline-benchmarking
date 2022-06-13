@@ -1,6 +1,6 @@
 import os
 import time
-from constants import PRODIGAL_INPUT_FILENAME, PRODIGAL_OUTPUT_FILENAME
+from py.constants import PRODIGAL_INPUT_FILENAME, PRODIGAL_OUTPUT_FILENAME
 
 
 def run_prodigal() -> int:
@@ -17,7 +17,8 @@ def run_prodigal() -> int:
     os.system(
         f"prodigal \
         -i {PRODIGAL_INPUT_FILENAME} \
-        -a {PRODIGAL_OUTPUT_FILENAME} > /dev/null"
+        -a {PRODIGAL_OUTPUT_FILENAME} \
+        > /dev/null"  # Silence standard output
     )
 
     prodigal_stop = time.perf_counter()

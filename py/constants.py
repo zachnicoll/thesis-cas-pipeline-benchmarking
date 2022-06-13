@@ -18,12 +18,14 @@ PRODIGAL_OUTPUT_FILENAME = "proteins.faa"
 
 # hmmer
 HMMSEARCH_OUTPUT_FILENAME = "summary.txt"
+HMM_DB_FILENAME = "profiles/database.hmm"
 HMM_SUMMARY_ID_INDEX = 0
+HMM_SUMMARY_E_INDEX = 4
 HMM_SUMMARY_SCORE_INDEX = 5
 HMM_SUMMARY_DOMAIN_START_INDEX = 19
 HMM_SUMMARY_DOMAIN_END_INDEX = 21
 # TODO: Determine "good" score threshold
-HMM_THRESHOLD_SCORE = 0.0
+HMM_THRESHOLD_SCORE = 1e-30
 
 # Statistical Analysis
 DOMAIN_TOLERANCE = 0.1  # Predicted domains can be within 10% of ground truth

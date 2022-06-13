@@ -3,6 +3,8 @@
 summary.txt
 genomes.fasta
 groundtruth.json
+profiles/database.*
+family_statistics.csv
 
 # Don't ignore .R files
 !.R
@@ -11,3 +13,4 @@ groundtruth.json
 .R*
 
 .vscode
+__pycache__

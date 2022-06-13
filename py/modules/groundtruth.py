@@ -2,9 +2,10 @@ import csv
 import json
 from os.path import exists
 import re
+from typing import Optional
 
-from models.GroundTruth import Gene, GroundTruth
-from constants import (
+from py.models.GroundTruth import Gene, GroundTruth
+from py.constants import (
     GROUNDTRUTH_FILENAME,
     GROUNDTRUTH_JSON_FILENAME,
     LOCI_HEADER_GENBANK_ID_INDEX,
@@ -16,7 +17,7 @@ from constants import (
 )
 
 
-def parse_gene_row(row: "list[str]") -> Gene:
+def parse_gene_row(row: "list[str]") -> Optional[Gene]:
     [start_domain, end_domain] = map(
         int, row[LOCI_DESCRIPTION_DOMAIN_INDEX].split("..")
     )
@@ -25,6 +26,10 @@ def parse_gene_row(row: "list[str]") -> Gene:
     sequence_families = row[LOCI_DESCRIPTION_SEQUENCE_FAMILIES_INDEX].split(
         ",")
     system_subtype = row[LOCI_DESCRIPTION_SYSTEM_SUBTYPE_INDEX]
+
+    # If the groundtruth does not know what profile matches to a gene, then how will we?
+    if "Unknown" in profiles:
+        return None
 
     return Gene(
         start_domain,
@@ -40,7 +45,8 @@ def parse_groundtruth() -> GroundTruth:
     print("Parsing groundtruth genome data...")
 
     if exists(GROUNDTRUTH_JSON_FILENAME):
-        print("Existing genome.json file found, loading contents.")
+        print(
+            f"Existing {GROUNDTRUTH_JSON_FILENAME} file found, loading contents.")
 
         # Cached JSON file exists, serialize it as a GroundTruth object
         groundtruth_json = json.load(open(GROUNDTRUTH_JSON_FILENAME))
@@ -75,7 +81,9 @@ def parse_groundtruth() -> GroundTruth:
             for row in table:
                 # Parse row and add to GroundTruth object
                 gene = parse_gene_row(row)
-                groundtruth.add_gene(current_genbank_id, gene)
+
+                if gene is not None:
+                    groundtruth.add_gene(current_genbank_id, gene)
 
     # Convert to JSON
     groundtruth_json = json.dumps(groundtruth, default=vars)

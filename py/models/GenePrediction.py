@@ -2,22 +2,27 @@ from typing import List, Optional, Dict
 
 
 class GenePredictionInfo:
-    cas_sequence_family: str
+    profile: str
     start_domain: int
     end_domain: int
     score: float
+    e_val: float
     accuracy: Optional[float]
+    visited: Optional[bool]
 
     def __init__(self,
-                 cas_sequence_family: str,
+                 profile: str,
                  start_domain: int,
                  end_domain: int,
-                 score: float) -> None:
-        self.cas_sequence_family = cas_sequence_family
+                 score: float,
+                 e_val: float) -> None:
+        self.profile = profile
         self.start_domain = start_domain
         self.end_domain = end_domain
         self.score = score
+        self.e_val = e_val
         self.accuracy = None
+        self.visited = False
 
 
 class GenePredictionResults:
@@ -60,7 +65,7 @@ class GenePredictionResults:
         start_domain, and end_domain. Used for detecting duplicate results,
         which hmmer is capable of producing.
         """
-        return (result_a.cas_sequence_family == result_b.cas_sequence_family and
+        return (result_a.profile == result_b.profile and
                 result_a.start_domain == result_b.start_domain and
                 result_a.end_domain == result_b.end_domain)
 
