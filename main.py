@@ -25,6 +25,9 @@ def main():
     Precision: {hmmer_precision * 100}%
     Recall: {hmmer_recall * 100}%
     Accuracy: {hmmer_accuracy * 100}%
+
+    Prodigal Run Time: {prodigal_run_time}s
+    Hmmer Run Time: {hmmer_run_time}s
     Total Runtime: {prodigal_run_time + hmmer_run_time}s
 """)
 

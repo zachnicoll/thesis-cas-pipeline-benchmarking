@@ -7,7 +7,7 @@ Run `download_genomes.R` in RStudio to download a set of genomes to detect Cas g
 Then,
 
 ```py
-python process_profiler.py
+python main.py
 ```
 ## About
 
