@@ -1,6 +1,7 @@
 from statistics import mean
 from typing import Dict, List, Tuple
 from py.models.CasFamilyCount import CasFamilyCount
+from py.models.CasProfileFamily import CasProfileFamilyMap
 from py.models.GroundTruth import Genome, GroundTruth
 from py.models.GenePrediction import GenePredictionInfo, GenePredictionResults
 from py.constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE
@@ -49,7 +50,8 @@ def predicted_domain_is_within_error_margins(
 
 def genome_prediction_statistics(
     genome_truth: Genome,
-    predictions: List[GenePredictionInfo]
+    predictions: List[GenePredictionInfo],
+    profile_family_map: CasProfileFamilyMap
 ) -> Tuple[float, float, List[GenePredictionInfo], List[GenePredictionInfo]]:
     """
     For a given genome and a set of predictions about that genome,
@@ -69,7 +71,8 @@ def genome_prediction_statistics(
 
         # Find the prediction relevant to this gene with the highest confidence score
         for prediction in predictions:
-            if prediction.profile in gene.profiles and not prediction.visited:
+            # Prediction is only correct if the same sequence family is detected
+            if profile_family_map[prediction.profile].family in gene.sequence_families and not prediction.visited:
                 if (highest_confidence is None or
                         prediction.score > highest_confidence.score):
                     highest_confidence = prediction
@@ -159,7 +162,7 @@ def pipeline_statistics(
         genome = groundtruth.genomes[genbank_id]
         predictions = prediction_results.get_sorted_results(genbank_id)
 
-        (TPs, FPs) = genome_prediction_statistics(genome, predictions)
+        (TPs, FPs) = genome_prediction_statistics(genome, predictions, cas_profile_families)
 
         for gene in genome.genes:
             for profile in gene.profiles:
