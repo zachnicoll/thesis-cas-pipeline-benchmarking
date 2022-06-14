@@ -7,11 +7,13 @@ def main():
     groundtruth = parse_groundtruth()
 
     """ Prodigal & hmmer Pipeline """
+    execute_prodigal = False  # Only run prodigal when necessary
+
     (
         hmmer_predictions,
         prodigal_run_time,
         hmmer_run_time
-    ) = prodigal_hmmer_pipeline(False)  # Don't run prodigal while testing
+    ) = prodigal_hmmer_pipeline(execute_prodigal)
 
     (
         hmmer_precision,
