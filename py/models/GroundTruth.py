@@ -32,10 +32,14 @@ class Gene:
 
 
 class Genome:
+    start_domain: int
+    end_domain: int
     genes: "list[Gene]"
 
     def __init__(self) -> None:
         self.genes = []
+        self.start_domain = -1
+        self.end_domain = -1
 
     def get_candidates_for_prediction(
         self,
@@ -79,6 +83,10 @@ class GroundTruth:
                 """
             )
 
+    def set_genome_domain(self, genbank_id: str, start_domain: int, end_domain: int) -> None:
+        self.genomes[genbank_id].start_domain = start_domain
+        self.genomes[genbank_id].end_domain = end_domain
+
     @staticmethod
     def from_json(_json: dict) -> 'GroundTruth':
         groundtruth = GroundTruth()
@@ -88,6 +96,7 @@ class GroundTruth:
         for genbank_id in genomes:
             groundtruth.init_genome(genbank_id)
             genome: dict = genomes[genbank_id]
+            groundtruth.set_genome_domain(genbank_id, genome["start_domain"], genome["end_domain"])
 
             gene: dict
             for gene in genome["genes"]:

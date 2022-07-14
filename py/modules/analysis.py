@@ -160,7 +160,14 @@ def pipeline_statistics(
         print(f"Analysing results for {genbank_id}...")
 
         genome = groundtruth.genomes[genbank_id]
-        predictions = prediction_results.get_sorted_results(genbank_id)
+        predictions = list(
+            # Exclude predictions outside the genome's CRISPR system
+            # In practice, only upstream and downstream of the CRISPR array would be searched.
+            filter(
+                lambda p: p.start_domain >= genome.start_domain and p.end_domain <= genome.end_domain,
+                prediction_results.get_sorted_results(genbank_id)
+            )
+        )
 
         (TPs, FPs) = genome_prediction_statistics(genome, predictions, cas_profile_families)
 
@@ -206,9 +213,6 @@ def pipeline_statistics(
         precisions.append(p)
         recalls.append(r)
         accuracies.append(a)
-
-    print(f"Average E-Value of TP: {mean(tp_e_vals)}")
-    print(f"Average E-Value of FP: {mean(fp_e_vals)}")
 
     write_per_family_statistics_to_file(count_of_families)
 

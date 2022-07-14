@@ -61,6 +61,8 @@ def parse_groundtruth() -> GroundTruth:
 
     groundtruth = GroundTruth()
     current_genbank_id = None
+    genome_start_domain = None
+    genome_end_domain = None
 
     for entry in split_by_genome:
         if entry.startswith("==="):
@@ -69,6 +71,9 @@ def parse_groundtruth() -> GroundTruth:
 
             # Extract Genbank ID and intialise genome in GroundTruth object
             current_genbank_id = header[LOCI_HEADER_GENBANK_ID_INDEX]
+            genome_start_domain = None
+            genome_end_domain = None
+
             groundtruth.init_genome(current_genbank_id)
         elif current_genbank_id is not None:
             # Entry is multiple lines containing each gene & its description
@@ -83,6 +88,13 @@ def parse_groundtruth() -> GroundTruth:
                 gene = parse_gene_row(row)
 
                 if gene is not None:
+                    if genome_start_domain is None:
+                        genome_start_domain = gene.start_domain
+
+                    if genome_end_domain is None or gene.end_domain > genome_end_domain:
+                        genome_end_domain = gene.end_domain
+
+                    groundtruth.set_genome_domain(current_genbank_id, genome_start_domain, genome_end_domain)
                     groundtruth.add_gene(current_genbank_id, gene)
 
     # Convert to JSON
