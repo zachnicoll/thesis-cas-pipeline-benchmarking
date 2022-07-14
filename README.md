@@ -2,12 +2,14 @@
 
 ### Quick Start
 
+Ensure `git lfs` (large file storage) has been installed in the repo (see [here](https://git-lfs.github.com/)).
+
 Run `download_genomes.R` in RStudio to download a set of genomes. Tweak the `max_genomes` variable to alter the number of genomes downloaded.
 
-Build the HMM database for hmmer by running:
+To install the project's dependancy programs (hmmer, prodigal, etc.), run:
 
-```sh
-cd profiles && _build_hmm_db.sh
+```shell
+sudo ./install_deps.sh
 ```
 
 Ensure `execute_prodigal = True` in `main.py` before running the script for the first time.
