@@ -34,5 +34,5 @@ for (i in 1:(length(genome_search_terms)/genomes_per_search)) {
   }
 }
 
-writeLines(fasta, "genomes.fasta")
+writeLines(fasta, "genomes/genomes.fasta")
 

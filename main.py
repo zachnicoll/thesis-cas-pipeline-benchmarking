@@ -1,13 +1,35 @@
+from py.modules.prospector_cas import run_prospector_cas_only
 from py.pipelines.prodigal_hmmer_pipeline import prodigal_hmmer_pipeline
 from py.modules.groundtruth import parse_groundtruth
 from py.modules.analysis import pipeline_statistics
 
 
 def main():
+
     groundtruth = parse_groundtruth()
 
+    (prospector_predictions, prospector_run_time) = run_prospector_cas_only()
+
+    (
+        prosp_precision,
+        prosp_recall,
+        prosp_accuracy
+    ) = pipeline_statistics(groundtruth, prospector_predictions)
+
+    print(f"""
+-- Prodigal & hmmer Pipeline Statistics --
+    Genomes Predicted: {len(prospector_predictions.results)}
+    Precision: {prosp_precision * 100}%
+    Recall: {prosp_recall * 100}%
+    Accuracy: {prosp_accuracy * 100}%
+
+    Total Run Time: {prospector_run_time}s
+""")
+
+    return
+
     """ Prodigal & hmmer Pipeline """
-    execute_prodigal = False  # Only run prodigal when necessary
+    execute_prodigal = True  # Only run prodigal when necessary
 
     (
         hmmer_predictions,

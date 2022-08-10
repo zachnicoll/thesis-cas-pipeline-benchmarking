@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from typing import Tuple
+from typing import Tuple, List
 from py.constants import (
     HMM_DB_FILENAME,
     PRODIGAL_OUTPUT_FILENAME,
@@ -15,7 +15,7 @@ from py.constants import (
 from py.models.GenePrediction import GenePredictionResults, GenePredictionInfo
 
 
-def parse_summary_row(row: str) \
+def parse_summary_row(row: List[str]) \
         -> Tuple[str, GenePredictionInfo]:
     genbank_id: str = re.split(
         r"(.+\.[0-9])", row[HMM_SUMMARY_ID_INDEX])[1]
@@ -41,7 +41,7 @@ def parse_summary_row(row: str) \
     )
 
 
-def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
+def run_hmmsearch() -> Tuple[GenePredictionResults, float]:
     print("Executing hmmsearch...")
 
     gene_predictions = GenePredictionResults()
@@ -73,4 +73,4 @@ def run_hmmsearch() -> Tuple[GenePredictionResults, int]:
     hmmer_stop = time.perf_counter()
     hmmer_run_time = hmmer_stop - hmmer_start
 
-    return (gene_predictions, hmmer_run_time)
+    return gene_predictions, hmmer_run_time

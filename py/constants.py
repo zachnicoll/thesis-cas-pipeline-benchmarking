@@ -1,3 +1,7 @@
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+
 # Groundtruth Files
 GROUNDTRUTH_FILENAME = "data_acquisition/crispr_groundtruth.txt"
 GROUNDTRUTH_JSON_FILENAME = "groundtruth.json"
@@ -13,7 +17,7 @@ LOCI_DESCRIPTION_SEQUENCE_FAMILIES_INDEX = 9
 LOCI_DESCRIPTION_SYSTEM_SUBTYPE_INDEX = 10
 
 # Prodigal
-PRODIGAL_INPUT_FILENAME = "data_acquisition/genomes.fasta"
+GENOME_INPUT = "data_acquisition/genomes"
 PRODIGAL_OUTPUT_FILENAME = "proteins.faa"
 
 # hmmer
@@ -26,6 +30,12 @@ HMM_SUMMARY_DOMAIN_START_INDEX = 19
 HMM_SUMMARY_DOMAIN_END_INDEX = 21
 # TODO: Determine "good" score threshold
 HMM_THRESHOLD_SCORE = 1e-30
+
+# prospector
+PROFILE_FAMILY_MAP = "profiles/profFam.tsv"
+CAS_ALIGNMENTS = "profiles/alignments"
+PROSPECTOR_OUTPUT = "prospector_output"
+PROSPECTOR_RESULTS = f"{PROSPECTOR_OUTPUT}/results/"
 
 # Statistical Analysis
 DOMAIN_TOLERANCE = 0.1  # Predicted domains can be within 10% of ground truth

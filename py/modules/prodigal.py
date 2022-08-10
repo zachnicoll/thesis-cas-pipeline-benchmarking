@@ -1,9 +1,9 @@
 import os
 import time
-from py.constants import PRODIGAL_INPUT_FILENAME, PRODIGAL_OUTPUT_FILENAME
+from py.constants import GENOME_INPUT, PRODIGAL_OUTPUT_FILENAME
 
 
-def run_prodigal() -> int:
+def run_prodigal() -> float:
     """
     Runs the prodigal program to find all proteins
     in the data_acquisition/genomes.fasta file. Result
@@ -16,7 +16,7 @@ def run_prodigal() -> int:
 
     os.system(
         f"prodigal \
-        -i {PRODIGAL_INPUT_FILENAME} \
+        -i {GENOME_INPUT} \
         -a {PRODIGAL_OUTPUT_FILENAME} \
         > /dev/null"  # Silence standard output
     )

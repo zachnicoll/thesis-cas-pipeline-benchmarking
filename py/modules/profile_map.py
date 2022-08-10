@@ -1,9 +1,11 @@
 from typing import Dict
+
+from py.constants import PROFILE_FAMILY_MAP
 from py.models.CasProfileFamily import CasProfileFamily
 
 
 def parse_profile_family_map() -> Dict[str, CasProfileFamily]:
-    profile_map_tsv = open("profiles/profFam.tab").read().splitlines()
+    profile_map_tsv = open(PROFILE_FAMILY_MAP).read().splitlines()
 
     # Maps Cas HMM profile name to class containing "family" and "types"
     profile_map: Dict[str, CasProfileFamily] = {}

@@ -18,4 +18,4 @@ def prodigal_hmmer_pipeline(
     prodigal_run_time = run_prodigal() if execute_prodigal else 0
     (prediction_result, hmmer_run_time) = run_hmmsearch()
 
-    return (prediction_result, prodigal_run_time, hmmer_run_time)
+    return prediction_result, prodigal_run_time, hmmer_run_time

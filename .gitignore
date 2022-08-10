@@ -15,3 +15,4 @@ family_statistics.csv
 .vscode
 __pycache__
 deps_temp
+prospector_output
