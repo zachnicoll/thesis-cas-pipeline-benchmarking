@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "thesis-cas-pipeline-benchmarking"
+version = "0.1.0"
+description = ""
+authors = ["Zach <zach.nicoll55@gmail.com>"]
+readme = "README.md"
+packages = [{include = "thesis_cas_pipeline_benchmarking"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+bio = "^1.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
