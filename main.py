@@ -4,11 +4,14 @@ from py.modules.groundtruth import parse_groundtruth
 from py.modules.analysis import pipeline_statistics
 
 
+# Min gene length = 80bp
+# Max delta between CRISPR and nearest cas gene = 67343bp
+
 def main():
 
     groundtruth = parse_groundtruth()
 
-    (prospector_predictions, prospector_run_time) = run_prospector_cas_only()
+    (prospector_predictions, prospector_run_time) = run_prospector_cas_only(True)
 
     (
         prosp_precision,

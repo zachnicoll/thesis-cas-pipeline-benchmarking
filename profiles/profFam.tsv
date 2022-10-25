@@ -46,8 +46,6 @@ pfam09711	csn2	CAS-II-A	acquisition_associated
 icity0039	RT	CAS-I-E	acquisition_associated
 icity0040	RT	CAS-III-AM,CAS-III-B	acquisition_associated
 pfam00078	RT	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	acquisition_associated
-mkCas0200	2OG	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated
-pfam13640	2OG	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated
 icity0064	AbiEii	CAS-III-C	associated
 icity0065	AbiEii	CAS-III	associated
 icity0066	AbiEii	CAS-III-A	associated
@@ -77,7 +75,6 @@ cd09740	csx3	CAS-I,CAS-III	associated
 mkCas0115	csx3	CAS-I,CAS-III	associated
 pfam09620	csx3	CAS-I,CAS-III	associated
 icity0075	cysH	CAS-IV-A	associated
-cd06127	DEDDh	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated
 icity0077	DHH_CorA	CAS-III-B	associated
 cd09708	DinG	CAS-IV-A	associated
 COG1199	DinG	CAS-IV-A	associated
@@ -102,7 +99,6 @@ icity0035	PIWI	CAS-III-AM	associated
 COG4951	PrimPol	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated
 pfam08800	PrimPol	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated
 icity0041	ST_Kinase	CAS-I-C	associated
-icity0110	STAND_TPR	CAS-I-E	associated
 mkCas0219	tm_4	CAS-VI-B	associated
 mkCas0218	tm_HEPN	CAS-VI-B	associated
 pfam06527	TniQ	CAS-I-F	associated
@@ -111,14 +107,6 @@ icity0106	TPR	CAS-III-B	associated
 icity0107	TPR	CAS-III-A	associated
 icity0108	TPR	CAS-III-B	associated
 icity0109	TPR	CAS-III-A	associated
-icity0043	Unk_01	CAS-III-D	associated
-icity0044	Unk_01	CAS-III-D	associated
-icity0045	Unk_02	CAS-III-A,CAS-III-B	associated
-icity0046	Unk_02	CAS-III-A	associated
-icity0047	Unk_03	CAS-III-B	associated
-icity0048	Unk_04	CAS-I-E	associated
-icity0027	Unk_05	CAS-I-B	associated
-icity0094	Unk_06	CAS-III-D	associated
 cd09655	casR	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated_signaling
 cls001593	casR	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated_signaling
 icity0089	casR	CAS-III-B	associated_signaling
@@ -162,10 +150,6 @@ pfam09002	csx1	CAS-III	associated_signaling
 pfam09455	csx1	CAS-III	associated_signaling
 pfam09623	csx1	CAS-III	associated_signaling
 pfam09670	csx1	CAS-III	associated_signaling
-COG2378	WYL	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated_signaling
-mkCas0075	WYL	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated_signaling
-mkCas0110	WYL	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated_signaling
-pfam13280	WYL	CAS-I,CAS-II,CAS-III,CAS-IV,CAS-V,CAS-VI	associated_signaling
 icity0019	cas6	CAS-III-B,CAS-I-B	crRNAmaturation
 icity0020	cas6	CAS-I-D	crRNAmaturation
 icity0025	cas6	CAS-I-A,CAS-III-D	crRNAmaturation

@@ -26,15 +26,15 @@ class GenePredictionInfo:
         self.visited = False
 
     def __init__(self,
-                 profile: str,
                  family: str,
                  start_domain: int,
-                 end_domain: int) -> None:
-        self.profile = profile
+                 end_domain: int,
+                 score: float) -> None:
+        self.profile = None
         self.family = family
         self.start_domain = start_domain
         self.end_domain = end_domain
-        self.score = 0
+        self.score = score
         self.e_val = 0
         self.accuracy = None
         self.visited = False
@@ -80,7 +80,13 @@ class GenePredictionResults:
         start_domain, and end_domain. Used for detecting duplicate results,
         which hmmer is capable of producing.
         """
-        return (result_a.profile == result_b.profile and
+        return (
+                (
+                        result_a.profile == result_b.profile or (
+                            result_a.family is not None and
+                            result_a.family == result_b.family
+                        )
+                ) and
                 result_a.start_domain == result_b.start_domain and
                 result_a.end_domain == result_b.end_domain)
 
