@@ -37,6 +37,9 @@ CAS_ALIGNMENTS = "profiles/alignments"
 PROSPECTOR_OUTPUT = "prospector_output"
 PROSPECTOR_RESULTS = f"{PROSPECTOR_OUTPUT}/results/"
 
+# CRISPRLoci
+CRISPRLOCI_OUTPUT = "crisprloci_output"
+
 # Statistical Analysis
 DOMAIN_TOLERANCE = 0.1  # Predicted domains can be within 10% of ground truth
 MIN_DOMAIN_TOLERANCE = 1 - DOMAIN_TOLERANCE

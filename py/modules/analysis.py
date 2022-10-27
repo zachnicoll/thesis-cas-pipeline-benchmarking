@@ -1,11 +1,14 @@
 from statistics import mean
 from typing import Dict, List, Tuple
+
+from main import START_TIME
 from py.models.CasFamilyCount import CasFamilyCount
 from py.models.CasProfileFamily import CasProfileFamilyMap
 from py.models.GroundTruth import Genome, GroundTruth, Gene
 from py.models.GenePrediction import GenePredictionInfo, GenePredictionResults
 from py.constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE
 from py.modules.profile_map import parse_profile_family_map
+import os
 
 
 def precision(TP: float, FP: float) -> float:
@@ -139,8 +142,6 @@ def genome_prediction_statistics(
                 true_positives += tps
                 false_positives += fps
 
-                codon_length = 3
-
                 # Remove all other predictions that fall within this prediction's domain.
                 # This reduces false positives, as a given domain can only be classified
                 # as a single gene.
@@ -182,7 +183,8 @@ def genome_prediction_statistics(
 
 def pipeline_statistics(
         groundtruth: GroundTruth,
-        prediction_results: GenePredictionResults
+        prediction_results: GenePredictionResults,
+        run_id: str
 ) -> Tuple[float, float, float]:
     """
     Given a set of gene predictions against a ground truth of genomes,
@@ -240,7 +242,7 @@ def pipeline_statistics(
         recalls.append(r)
         accuracies.append(a)
 
-    write_per_family_statistics_to_file(count_of_families)
+    write_per_family_statistics_to_file(count_of_families, run_id)
 
     average_precision = mean(precisions) if len(precisions) > 0 else 0.0
     average_recall = mean(recalls) if len(recalls) > 0 else 0.0
@@ -261,7 +263,8 @@ def family_stats(family: CasFamilyCount) -> Tuple[float, float, float]:
 
 
 def write_per_family_statistics_to_file(
-        family_counts: Dict[str, CasFamilyCount]
+        family_counts: Dict[str, CasFamilyCount],
+        run_id: str
 ) -> None:
     table = "Family,Precision,Recall,Accuracy\n"
 
@@ -269,7 +272,10 @@ def write_per_family_statistics_to_file(
         (p, r, a) = family_stats(family_counts[family])
         table += f"{family},{p},{r},{a}\n"
 
-    f = open("family_statistics.csv", 'w+')
-    f.truncate(0)
-    f.write(table)
-    f.close()
+    filename = f"results/{START_TIME}/family_statistics_{run_id}.csv"
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+
+    with open(filename, 'w+') as f:
+        f.truncate(0)
+        f.write(table)
+        f.close()

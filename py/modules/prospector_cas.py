@@ -27,15 +27,10 @@ def parse_summary_row(row: List[str]) -> List[GenePredictionInfo]:
     return predictions
 
 
-def run_prospector_cas_only(proximal_search: bool) -> Tuple[GenePredictionResults, float]:
-    """
-    """
-
+def run_prospector_cas_only(threshold: int, chunk_length: int) -> Tuple[GenePredictionResults, float]:
     gene_predictions = GenePredictionResults()
 
     prospector_start = time.perf_counter()
-
-    prox_search_str = "--proxSearch" if proximal_search else ""
 
     os.system(
         f"/home/zach/repos/thesis/prospector/cmake-build-debug/prospector \
@@ -44,9 +39,9 @@ def run_prospector_cas_only(proximal_search: bool) -> Tuple[GenePredictionResult
         --genome {ROOT_DIR}/{GENOME_INPUT} \
         --out {ROOT_DIR}/{PROSPECTOR_OUTPUT} \
         --skipSer \
-        --casThreshold 5 \
-        --casChunkLength 100 \
-        {prox_search_str}"
+        --casThreshold {threshold} \
+        --casChunkLength {chunk_length} \
+        --proxSearch"
     )
 
     prospector_end = time.perf_counter()

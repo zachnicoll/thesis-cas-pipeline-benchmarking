@@ -1,14 +1,19 @@
 from Bio import Entrez
+import random
 
 Entrez.email = 'prospector@qut.com'
 
-n_genomes = 100
+n_genomes = 5
 
 print(f"Obtaining {n_genomes} genomes from NCBI...")
 
 rows = (row for row in open('crispr_groundtruth.txt'))
-genome_search_terms = (row.split('\t')[4] for row in filter(lambda r: r.find("===") != -1, rows))
-ids = [next(genome_search_terms) for _ in range(n_genomes)]
+genome_search_terms = list((row.split('\t')[4] for row in filter(lambda r: r.find("===") != -1, rows)))
+
+rand_indices = random.sample(range(1, len(genome_search_terms)), n_genomes)
+ids = []
+for i in rand_indices:
+    ids.append(genome_search_terms[i])
 
 handle = Entrez.efetch(db="nucleotide", id=','.join(ids), rettype="fasta")
 
