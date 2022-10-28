@@ -18,10 +18,12 @@ def parse_summary_row(row: List[str]) -> List[GenePredictionInfo]:
     for family in families:
         if family != "CRISPR":
             predictions.append(GenePredictionInfo(
+                None,
                 family,
                 start_domain,
                 end_domain,
-                score
+                score,
+                None
             ))
 
     return predictions

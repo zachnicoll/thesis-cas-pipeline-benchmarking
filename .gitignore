@@ -1,7 +1,7 @@
 .DS_Store
 *.faa
 summary.txt
-data_acquisition/genomes/genomes.fasta
+data_acquisition/genomes
 groundtruth.json
 profiles/database.*
 family_statistics.csv
@@ -15,6 +15,6 @@ family_statistics.csv
 .vscode
 __pycache__
 deps_temp
-prospector_output
+*_output
 .venv
 .idea

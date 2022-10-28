@@ -1,3 +1,4 @@
+from datetime import datetime
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -44,3 +45,5 @@ CRISPRLOCI_OUTPUT = "crisprloci_output"
 DOMAIN_TOLERANCE = 0.1  # Predicted domains can be within 10% of ground truth
 MIN_DOMAIN_TOLERANCE = 1 - DOMAIN_TOLERANCE
 MAX_DOMAIN_TOLERANCE = 1 + DOMAIN_TOLERANCE
+
+START_TIME = datetime.now()

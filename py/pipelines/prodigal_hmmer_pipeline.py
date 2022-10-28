@@ -8,7 +8,7 @@ def prodigal_hmmer_pipeline(
     execute_prodigal=True
 ) -> Tuple[GenePredictionResults, float, float]:
     """
-    Runs prodigal to data_acquisition/genomes.fasta into a set of proteins.
+    Runs prodigal to data_acquisition/genomes/genomes.fasta into a set of proteins.
     Then, each Cas gene .hmm profile is run against the set of proteins
     using hmmersearch to determine if certain Cas genes exist in the genome.
 

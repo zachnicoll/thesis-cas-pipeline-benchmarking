@@ -1,12 +1,11 @@
 from statistics import mean
 from typing import Dict, List, Tuple
 
-from main import START_TIME
 from py.models.CasFamilyCount import CasFamilyCount
 from py.models.CasProfileFamily import CasProfileFamilyMap
 from py.models.GroundTruth import Genome, GroundTruth, Gene
 from py.models.GenePrediction import GenePredictionInfo, GenePredictionResults
-from py.constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE
+from py.constants import MIN_DOMAIN_TOLERANCE, MAX_DOMAIN_TOLERANCE, START_TIME
 from py.modules.profile_map import parse_profile_family_map
 import os
 
@@ -168,7 +167,8 @@ def genome_prediction_statistics(
             for prediction in predictions:
                 # Prediction is only correct if the same sequence family is detected
                 if (
-                        profile_family_map[prediction.profile].family in gene.sequence_families or
+                        (prediction.profile is not None and profile_family_map[
+                            prediction.profile].family in gene.sequence_families) or
                         prediction.family in gene.sequence_families
                 ) and not prediction.visited:
                     tps, fps = gene_tp_fp(gene, prediction)
@@ -272,7 +272,7 @@ def write_per_family_statistics_to_file(
         (p, r, a) = family_stats(family_counts[family])
         table += f"{family},{p},{r},{a}\n"
 
-    filename = f"results/{START_TIME}/family_statistics_{run_id}.csv"
+    filename = f"benchmark_output/{START_TIME}/family_statistics_{run_id}.csv"
     os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     with open(filename, 'w+') as f:

@@ -9,21 +9,20 @@ from py.modules.analysis import pipeline_statistics
 # Min gene length = 80bp
 # Max delta between CRISPR and nearest cas gene = 67343bp
 
-thresholds = [5, 10, 15, 20, 25, 50]
-chunks = [100, 150, 200, 250, 300, 1000]
+# thresholds = [5, 10, 15, 20, 25, 50]
+# chunks = [100, 150, 200, 250, 300, 1000]
+
+thresholds = [10]
+chunks = [250]
 
 should_run_crisprloci = True
 should_run_prospector = False
+old_prospector = False
 should_run_hmmer = False
-
-START_TIME = None
 
 
 def main():
     ground_truth = parse_groundtruth()
-
-    global START_TIME
-    START_TIME = datetime.datetime.now()
 
     if should_run_crisprloci:
         (crisprloci_predictions, crisprloci_run_time) = run_crisprloci()
@@ -45,25 +44,44 @@ def main():
                 """)
 
     if should_run_prospector:
-        for c in chunks:
-            for t in thresholds:
-                (prospector_predictions, prospector_run_time) = run_prospector_cas_only(t, c)
+        if old_prospector:
+            (prospector_predictions, prospector_run_time) = run_prospector_cas_only(0, 0)
 
-                (
-                    prosp_precision,
-                    prosp_recall,
-                    prosp_accuracy
-                ) = pipeline_statistics(ground_truth, prospector_predictions, f"new_prosp_{c}_{t}")
+            (
+                prosp_precision,
+                prosp_recall,
+                prosp_accuracy
+            ) = pipeline_statistics(ground_truth, prospector_predictions, f"old_prosp")
 
-                print(f"""
-            -- [NEW] Prospector Pipeline Statistics --
-                Genomes Predicted: {len(prospector_predictions.results)}
-                Precision: {prosp_precision * 100}%
-                Recall: {prosp_recall * 100}%
-                Accuracy: {prosp_accuracy * 100}%
-            
-                Total Run Time: {prospector_run_time}s
-            """)
+            print(f"""
+                    -- [OLD] Prospector Pipeline Statistics --
+                        Genomes Predicted: {len(prospector_predictions.results)}
+                        Precision: {prosp_precision * 100}%
+                        Recall: {prosp_recall * 100}%
+                        Accuracy: {prosp_accuracy * 100}%
+                    
+                        Total Run Time: {prospector_run_time}s
+                    """)
+        else:
+            for c in chunks:
+                for t in thresholds:
+                    (prospector_predictions, prospector_run_time) = run_prospector_cas_only(t, c)
+
+                    (
+                        prosp_precision,
+                        prosp_recall,
+                        prosp_accuracy
+                    ) = pipeline_statistics(ground_truth, prospector_predictions, f"new_prosp_{c}_{t}")
+
+                    print(f"""
+                -- [NEW] Prospector Pipeline Statistics --
+                    Genomes Predicted: {len(prospector_predictions.results)}
+                    Precision: {prosp_precision * 100}%
+                    Recall: {prosp_recall * 100}%
+                    Accuracy: {prosp_accuracy * 100}%
+                
+                    Total Run Time: {prospector_run_time}s
+                """)
 
     if should_run_hmmer:
         """ Prodigal & hmmer Pipeline """

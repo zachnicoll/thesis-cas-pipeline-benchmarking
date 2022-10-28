@@ -55,7 +55,7 @@ class GenePredictionResults:
         Returns the results for a given genome, sorted descending by score.
         """
         self.results[genbank_id].sort(
-            reverse=True, key=lambda info: info.score)
+            reverse=True, key=lambda info: info.score if info.score is not None else 0)
         return self.results[genbank_id]
 
     @staticmethod
